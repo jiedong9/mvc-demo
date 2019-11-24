@@ -1,6 +1,25 @@
 import './app3.css'
 import $ from 'jquery'
 
+const eventBus = $(window)
+
+const m = {
+    data: {
+        n: parseInt(localStorage.getItem('n')) || 100
+    },
+    create() {
+    },
+    delete() {
+    },
+    update(data) {
+        Object.assign(m.data, data)
+        eventBus.trigger('m:update')
+        localStorage.setItem('n',m.data.n)
+    },
+    get() {
+    }
+}
+
 const html = `
     <section id="app3">
         <div class="square"></div>

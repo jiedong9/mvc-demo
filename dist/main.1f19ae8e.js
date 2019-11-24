@@ -11192,6 +11192,20 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var eventBus = (0, _jquery.default)(window);
+var m = {
+  data: {
+    n: parseInt(localStorage.getItem('n')) || 100
+  },
+  create: function create() {},
+  delete: function _delete() {},
+  update: function update(data) {
+    Object.assign(m.data, data);
+    eventBus.trigger('m:update');
+    localStorage.setItem('n', m.data.n);
+  },
+  get: function get() {}
+};
 var html = "\n    <section id=\"app3\">\n        <div class=\"square\"></div>\n    </section>\n";
 var $element = (0, _jquery.default)(html).appendTo((0, _jquery.default)('body>.page'));
 var $square = (0, _jquery.default)('#app3 .square');
