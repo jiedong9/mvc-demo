@@ -11186,6 +11186,11 @@ module.hot.accept(reloadCSS);
 },{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel/src/builtins/css-loader.js"}],"app3.js":[function(require,module,exports) {
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
 require("./app3.css");
 
 var _jquery = _interopRequireDefault(require("jquery"));
@@ -11193,25 +11198,60 @@ var _jquery = _interopRequireDefault(require("jquery"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var eventBus = (0, _jquery.default)(window);
+var localKey = "app3.active";
 var m = {
   data: {
-    n: parseInt(localStorage.getItem('n')) || 100
+    active: localStorage.getItem(localKey) === 'yes'
   },
   create: function create() {},
   delete: function _delete() {},
   update: function update(data) {
     Object.assign(m.data, data);
     eventBus.trigger('m:update');
-    localStorage.setItem('n', m.data.n);
+    localStorage.setItem('active', m.data.active);
   },
   get: function get() {}
 };
-var html = "\n    <section id=\"app3\">\n        <div class=\"square\"></div>\n    </section>\n";
-var $element = (0, _jquery.default)(html).appendTo((0, _jquery.default)('body>.page'));
-var $square = (0, _jquery.default)('#app3 .square');
-var localKey = "app3.active";
-var active = localStorage.getItem(localKey) === 'yes';
-$square.toggleClass('active', active);
+var v = {
+  html: "\n<div>\n    <div class=\"square\"></div>\n</div>\n  \n",
+  init: function init(container) {
+    v.el = (0, _jquery.default)(container);
+  },
+  render: function render() {
+    if (v.el.children.length !== 0) v.el.empty();
+    (0, _jquery.default)(v.html).appendTo(v.el);
+  }
+};
+var c = {
+  init: function init(container) {
+    v.init(container);
+    v.render(m.data.active); // view = render(data)
+
+    c.autoBindEvents();
+    eventBus.on('m:updated', function () {
+      v.render(m.data.active);
+    });
+  },
+  events: {
+    'click .square': 'x'
+  },
+  x: function x(e) {
+    var index = parseInt(e.currentTarget.dataset.index);
+    console.log(index);
+    m.update({
+      index: index
+    });
+  },
+  autoBindEvents: function autoBindEvents() {
+    for (var key in c.events) {
+      var value = c[c.events[key]];
+      var spaceIndex = key.indexOf(' ');
+      var part1 = key.slice(0, spaceIndex);
+      var part2 = key.slice(spaceIndex + 1);
+      v.el.on(part1, part2, value);
+    }
+  }
+};
 $square.on('click', function () {
   if ($square.hasClass('active')) {
     $square.removeClass('active');
@@ -11221,6 +11261,8 @@ $square.on('click', function () {
     localStorage.setItem('app3.active', 'yes');
   }
 });
+var _default = c;
+exports.default = _default;
 },{"./app3.css":"app3.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app4.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -11254,7 +11296,7 @@ var _app = _interopRequireDefault(require("./app1.js"));
 
 var _app2 = _interopRequireDefault(require("./app2.js"));
 
-require("./app3.js");
+var _app3 = _interopRequireDefault(require("./app3.js"));
 
 require("./app4.js");
 
@@ -11263,6 +11305,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 _app.default.init('#app1');
 
 _app2.default.init('#app2');
+
+_app3.default.init('#app3');
 },{"./reset.css":"reset.css","./global.css":"global.css","./app1.js":"app1.js","./app2.js":"app2.js","./app3.js":"app3.js","./app4.js":"app4.js"}],"../../../../AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -11291,7 +11335,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61652" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51397" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

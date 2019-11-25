@@ -2,10 +2,12 @@ import './app3.css'
 import $ from 'jquery'
 
 const eventBus = $(window)
+const localKey = `app3.active`
 
 const m = {
+
     data: {
-        n: parseInt(localStorage.getItem('n')) || 100
+        active :localStorage.getItem(localKey) === 'yes'
     },
     create() {
     },
@@ -14,24 +16,55 @@ const m = {
     update(data) {
         Object.assign(m.data, data)
         eventBus.trigger('m:update')
-        localStorage.setItem('n',m.data.n)
+        localStorage.setItem('active',m.data.active)
     },
     get() {
     }
 }
 
-const html = `
-    <section id="app3">
-        <div class="square"></div>
-    </section>
-`
-const $element = $(html).appendTo($('body>.page'))
+const v = {
+    html :`
+<div>
+    <div class="square"></div>
+</div>
+  
+`,
+    init(container) {
+        v.el = $(container)
+    },
+    render() {
+        if (v.el.children.length !== 0) v.el.empty()
+        $(v.html).appendTo(v.el)
+    }
+}
 
-const $square = $('#app3 .square')
-const localKey = `app3.active`
-const active = localStorage.getItem(localKey) === 'yes'
-
-$square.toggleClass('active', active)
+const c = {
+    init(container) {
+        v.init(container)
+        v.render(m.data.active) // view = render(data)
+        c.autoBindEvents()
+        eventBus.on('m:updated', () => {
+            v.render(m.data.active)
+        })
+    },
+    events: {
+        'click .square': 'x',
+    },
+    x(e) {
+        const index = parseInt(e.currentTarget.dataset.index)
+        console.log(index)
+        m.update({index: index})
+    },
+    autoBindEvents() {
+        for (let key in c.events) {
+            const value = c[c.events[key]]
+            const spaceIndex = key.indexOf(' ')
+            const part1 = key.slice(0, spaceIndex)
+            const part2 = key.slice(spaceIndex + 1)
+            v.el.on(part1, part2, value)
+        }
+    }
+}
 
 
 $square.on('click', () => {
@@ -43,3 +76,5 @@ $square.on('click', () => {
         localStorage.setItem('app3.active', 'yes')
     }
 })
+
+export default c
